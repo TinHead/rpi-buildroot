@@ -408,6 +408,8 @@ source "package/greenlet/Config.in"
 source "package/gevent/Config.in"
 source "package/python-wiringpi2/Config.in"
 source "package/python-thrift/Config.in"
+source "package/python-ipython/Config.in"
+source "package/python-numpy/Config.in"
 endmenu
 endif
 source "package/python3/Config.in"

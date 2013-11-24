@@ -1,0 +1,6 @@
+config BR2_PACKAGE_PYTHON_IPYTHON
+	bool "python-ipython"
+	help
+		IPython provides a rich toolkit to help you make the most out of using Python interactively.
+		
+		https://pypi.python.org/pypi/ipython

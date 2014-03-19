@@ -64,5 +64,6 @@ endmenu
 
 endif
 
-comment "libdrm requires a toolchain with LARGEFILE support"
-	depends on BR2_PACKAGE_XORG7 && !BR2_LARGEFILE
+comment "libdrm needs a toolchain w/ largefile"
+	depends on BR2_PACKAGE_XORG7
+	depends on !BR2_LARGEFILE

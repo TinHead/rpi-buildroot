@@ -11,9 +11,10 @@
 #
 ################################################################################
 
-QT_VERSION = 4.8.5
+QT_VERSION_MAJOR = 4.8
+QT_VERSION = $(QT_VERSION_MAJOR).5
 QT_SOURCE  = qt-everywhere-opensource-src-$(QT_VERSION).tar.gz
-QT_SITE    = http://download.qt-project.org/official_releases/qt/4.8/$(QT_VERSION)
+QT_SITE    = http://download.qt-project.org/official_releases/qt/$(QT_VERSION_MAJOR)/$(QT_VERSION)
 QT_DEPENDENCIES = host-pkgconf
 QT_INSTALL_STAGING = YES
 
@@ -35,6 +36,7 @@ endif
 
 QT_CFLAGS = $(TARGET_CFLAGS)
 QT_CXXFLAGS = $(TARGET_CXXFLAGS)
+QT_LDFLAGS = $(TARGET_LDFLAGS)
 
 ifeq ($(BR2_LARGEFILE),y)
 QT_CONFIGURE_OPTS += -largefile
@@ -57,9 +59,14 @@ QT_CONFIGURE_OPTS += -no-qt3support
 endif
 
 ifeq ($(BR2_PACKAGE_QT_DEMOS),y)
-QT_CONFIGURE_OPTS += -examplesdir $(TARGET_DIR)/usr/share/qt/examples -demosdir $(TARGET_DIR)/usr/share/qt/demos
+QT_CONFIGURE_OPTS += -demosdir $(TARGET_DIR)/usr/share/qt/demos
 else
-QT_CONFIGURE_OPTS += -nomake examples -nomake demos
+QT_CONFIGURE_OPTS += -nomake demos
+endif
+ifeq ($(BR2_PACKAGE_QT_EXAMPLES),y)
+QT_CONFIGURE_OPTS += -examplesdir $(TARGET_DIR)/usr/share/qt/examples
+else
+QT_CONFIGURE_OPTS += -nomake examples
 endif
 
 # ensure glib is built first if enabled for Qt's glib support
@@ -320,6 +327,9 @@ endif
 ifeq ($(BR2_PACKAGE_QT_OPENGL_ES),y)
 QT_CONFIGURE_OPTS += -opengl es2 -egl
 QT_DEPENDENCIES   += libgles libegl
+QT_CFLAGS   += $(shell $(PKG_CONFIG_HOST_BINARY) --cflags egl)
+QT_CXXFLAGS += $(shell $(PKG_CONFIG_HOST_BINARY) --cflags egl)
+QT_LDFLAGS  += $(shell $(PKG_CONFIG_HOST_BINARY) --libs egl)
 else
 QT_CONFIGURE_OPTS += -no-opengl
 endif
@@ -331,7 +341,7 @@ QT_CONFIGURE_OPTS += -qt-sql-ibase
 endif
 ifeq ($(BR2_PACKAGE_QT_MYSQL),y)
 QT_CONFIGURE_OPTS += -qt-sql-mysql -mysql_config $(STAGING_DIR)/usr/bin/mysql_config
-QT_DEPENDENCIES   += mysql_client
+QT_DEPENDENCIES   += mysql
 endif
 ifeq ($(BR2_PACKAGE_QT_ODBC),y)
 QT_CONFIGURE_OPTS += -qt-sql-odbc
@@ -415,12 +425,6 @@ else
 QT_CONFIGURE_OPTS += -no-scripttools
 endif
 
-ifeq ($(BR2_PACKAGE_QT_JAVASCRIPTCORE),y)
-QT_CONFIGURE_OPTS += -javascript-jit
-else
-QT_CONFIGURE_OPTS += -no-javascript-jit
-endif
-
 ifeq ($(BR2_PACKAGE_QT_STL),y)
 QT_CONFIGURE_OPTS += -stl
 else
@@ -496,7 +500,7 @@ define QT_CONFIGURE_CMDS
 	$(call QT_QMAKE_SET,QMAKE_STRIP,$(TARGET_STRIP),$(@D))
 	$(call QT_QMAKE_SET,QMAKE_CFLAGS,$(QT_CFLAGS),$(@D))
 	$(call QT_QMAKE_SET,QMAKE_CXXFLAGS,$(QT_CXXFLAGS),$(@D))
-	$(call QT_QMAKE_SET,QMAKE_LFLAGS,$(TARGET_LDFLAGS),$(@D))
+	$(call QT_QMAKE_SET,QMAKE_LFLAGS,$(QT_LDFLAGS),$(@D))
 	$(call QT_QMAKE_SET,PKG_CONFIG,$(HOST_DIR)/usr/bin/pkg-config,$(@D))
 # Don't use TARGET_CONFIGURE_OPTS here, qmake would be compiled for the target
 # instead of the host then. So set PKG_CONFIG* manually.
@@ -682,16 +686,6 @@ define QT_INSTALL_TARGET_CMDS
 	$(QT_INSTALL_TARGET_FONTS_TTF)
 	$(QT_INSTALL_TARGET_POWERVR)
 	$(QT_INSTALL_TARGET_TRANSLATIONS)
-endef
-
-define QT_CLEAN_CMDS
-	-$(MAKE) -C $(@D) clean
-endef
-
-define QT_UNINSTALL_TARGET_CMDS
-	-rm -rf $(TARGET_DIR)/usr/lib/fonts
-	-rm $(TARGET_DIR)/usr/lib/libQt*.so.*
-	-rm $(TARGET_DIR)/usr/lib/libphonon.so.*
 endef
 
 $(eval $(generic-package))

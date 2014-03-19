@@ -4,8 +4,8 @@
 #
 ################################################################################
 
-CIVETWEB_VERSION = 1.3
-CIVETWEB_SITE = http://github.com/sunsetbrew/civetweb/tarball/v$(CIVETWEB_VERSION)
+CIVETWEB_VERSION = v1.3
+CIVETWEB_SITE = $(call github,sunsetbrew,civetweb,$(CIVETWEB_VERSION))
 CIVETWEB_LICENSE = MIT
 CIVETWEB_LICENSE_FILES = LICENSE.md
 
@@ -25,6 +25,9 @@ endif
 
 ifeq ($(BR2_CIVETWEB_WITH_LUA),y)
 	CIVETWEB_CONF_OPT += WITH_LUA=1
+ifeq ($(BR2_xtensa),y)
+	CIVETWEB_COPT += -mtext-section-literals
+endif
 endif
 
 ifeq ($(BR2_PACKAGE_OPENSSL),y)
@@ -53,4 +56,3 @@ define CIVETWEB_INSTALL_TARGET_CMDS
 endef
 
 $(eval $(generic-package))
-

@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-PCIUTILS_VERSION = 3.2.0
+PCIUTILS_VERSION = 3.2.1
 PCIUTILS_SITE = ftp://atrey.karlin.mff.cuni.cz/pub/linux/pci
 PCIUTILS_INSTALL_STAGING = YES
 PCIUTILS_LICENSE = GPLv2+
@@ -65,12 +65,5 @@ define PCIUTILS_INSTALL_STAGING_CMDS
 		SHARED=$(PCIUTILS_SHARED) install install-lib
 endef
 
-
-# Library lacks +x so strip skips it
-define PCIUTILS_FIX_LIBRARY_MODE
-	-chmod +x $(TARGET_DIR)/usr/lib/libpci.so*
-endef
-
-PCIUTILS_POST_INSTALL_TARGET_HOOKS += PCIUTILS_FIX_LIBRARY_MODE
 
 $(eval $(generic-package))

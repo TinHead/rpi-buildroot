@@ -428,18 +428,16 @@ source "package/python-pyusb/Config.in"
 source "package/python-pyzmq/Config.in"
 source "package/python-serial/Config.in"
 source "package/python-setuptools/Config.in"
-source "package/python-wiringpi2/Config.in"
+#source "package/python-wiringpi2/Config.in"
+source "package/python-rpio/Config.in"
 source "package/python-simplejson/Config.in"
 source "package/python-thrift/Config.in"
-<<<<<<< HEAD
 source "package/python-ipython/Config.in"
 source "package/python-numpy/Config.in"
-=======
 source "package/python-tornado/Config.in"
 source "package/python-versiontools/Config.in"
 source "package/greenlet/Config.in"
 source "package/gevent/Config.in"
->>>>>>> upstream/rpi
 endmenu
 endif
 source "package/python3/Config.in"

@@ -84,7 +84,7 @@ config BR2_PACKAGE_OPENCV_LIB_PHOTO
 	help
 	  Include opencv_photo module into the OpenCV build.
 
-comment "opencv_python module requires numpy which is not yet available."
+#comment "opencv_python module requires numpy which is not yet available."
 
 config BR2_PACKAGE_OPENCV_LIB_STITCHING
 	bool "stitching"
